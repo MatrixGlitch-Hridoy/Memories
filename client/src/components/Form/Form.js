@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Paper, TextField, Typography } from '@material-ui/core';
 import FileBase from 'react-file-base64';
 import useStyles from './styles';
-import { useDispatch } from 'react-redux';
-import { createPost } from '../../actions/posts';
-const Form = () => {
+import { useDispatch,useSelector } from 'react-redux';
+import { createPost,updatePost } from '../../actions/posts';
+
+const Form = ({currentId,setCurrentId}) => {
+    const post = useSelector(state=>currentId ? state.posts.find(p=>p._id===currentId):null);
+    // console.log(post);
     const [postData, setPostData] = useState({
         creator:'',
         title:'',
@@ -12,19 +15,32 @@ const Form = () => {
         tags:'',
         selectedFile:''
     })
+    // console.log('postdata',postData);
     const classes = useStyles();
     const dispatch = useDispatch();
+    useEffect(()=>{
+        if(post){
+            setPostData(post)
+        } 
+    },[post])
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(createPost(postData));
+        if(currentId){
+            dispatch(updatePost(currentId,postData))
+        }else{
+            dispatch(createPost(postData));
+        }
+        clear();
+
     }
     const clear = () => {
-
+        setCurrentId(null);
+        setPostData({ creator: '', title: '', message: '', tags: '', selectedFile: '' });
     }
     return (
         <Paper className={classes.paper}>
             <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-                <Typography variant="h6">Creating a Memory</Typography>
+                <Typography variant="h6">{currentId ? `Editing "${post.title}"` : 'Creating a Memory'}</Typography>
                 <TextField name="creator" variant="outlined" label="Creator" fullWidth
                 value={postData.creator}
                 onChange={(e)=>setPostData({...postData,  creator:e.target.value})}
