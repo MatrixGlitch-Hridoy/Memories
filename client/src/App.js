@@ -7,7 +7,7 @@ import Posts from './components/Posts/Posts';
 import memories from './images/memories.png';
 import useStyles from './styles';
 function App() {
-  const [currentId,setCurrentId] = useState(0);
+  const [currentId,setCurrentId] = useState(null);
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -22,7 +22,7 @@ function App() {
       </AppBar>
       <Grow in>
           <Container>
-            <Grid container justifyContent="space-between" alignItems="stretch" spacing={3}>
+            <Grid className={classes.mainContainer} container justifyContent="space-between" alignItems="stretch" spacing={3}>
                 <Grid item xs={12} sm={7}>
                   <Posts setCurrentId={setCurrentId}/>
                 </Grid>
